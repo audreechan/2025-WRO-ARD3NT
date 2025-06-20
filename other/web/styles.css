@@ -185,10 +185,14 @@ body {
     text-align: right;
 }
 .card-deck{
+    text-align: center;
     display: flex;
     flex-direction: row;
     width: 100%;
     justify-content: space-evenly;
+}
+.card-deck div:not(.card-deck){
+    flex: 1;
 }
 .card-deck img{
     max-width: 100%;
@@ -208,4 +212,28 @@ body {
     border-color: var(--color-text);
     background-color: var(--color-background);
     border-width: 3px 0;
+}
+.outlink-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+.outlink{
+    background-color: var(--color-background);
+    color: var(--color-text);
+    border: 2px solid var(--color-text);
+    border-radius: 5px;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+.outlink:hover {
+    background-color: var(--color-text);
+    color: var(--color-background);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+.copyright{
+    display: flex;
+    flex-direction: column;
 }
