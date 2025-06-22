@@ -25,7 +25,9 @@ const all = [
         "description": "A zombified bee that dies upon attacking, and has a chance to inflict poison. Spawned in swarms by the Hivemind Zombie."
     }
 ]
+let currentChecked = 0;
 let gallery = document.getElementById("gallery");
+let gallerySelectors = document.getElementById("gallery-selectors");
 function addCard(data, id){
     let card = document.createElement("div");
     card.className = "card";
@@ -35,13 +37,49 @@ function addCard(data, id){
         <h2>${data.title}</h2>
         <p>${data.description}</p>
     `;
-    if(id==0){
-        card.style.width = "100%";
-    }else{
-        card.style.width = "0%";
-        card.style.display = "none";
-    }
+    card.style.width = "100%";
+    card.style.flexShrink = "0";
+    card.classList.add("visible");
+    card.classList.add("gallery-card");
     gallery.appendChild(card);
+    let radio = document.createElement("input");
+    radio.type = "radio";
+    radio.name = "gallery";
+    radio.dataset.id = id;
+    radio.id = `gallery-${id}`;
+    radio.className = "gallery-radio";
+    radio.addEventListener("change", () => {
+        if (radio.checked) {
+            gallery.children[radio.dataset.id].scrollIntoView({
+                behavior: "smooth"});
+            currentChecked = radio.dataset.id;
+        }
+    });
+    if(id==0){
+        radio.checked = true;
+    }
+    let label = document.createElement("label");
+    label.htmlFor = `gallery-${id}`;
+    label.style.display = "none";
+    label.innerText = data.title;
+    gallerySelectors.appendChild(radio);
+    gallerySelectors.appendChild(label);
+}
+function next(){
+    if(currentChecked < all.length - 1){
+        currentChecked++;
+    } else {
+        currentChecked = 0;
+    }
+    document.getElementById(`gallery-${currentChecked}`).click();
+}
+function previous(){
+    if(currentChecked > 0){
+        currentChecked--;
+    } else {
+        currentChecked = all.length - 1;
+    }
+    document.getElementById(`gallery-${currentChecked}`).click();
 }
 function loadGallery() {
     for(let i = 0; i < all.length; i++) {

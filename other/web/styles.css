@@ -193,6 +193,7 @@ body {
 }
 .card-deck div:not(.card-deck){
     flex: 1;
+    padding: 20px;
 }
 .card-deck img{
     max-width: 100%;
@@ -236,4 +237,75 @@ body {
 .copyright{
     display: flex;
     flex-direction: column;
+}
+#gallery {
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+}
+#gallery-selectors{
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    justify-content: center;
+}
+.gallery-card{
+    text-align: center;
+}
+#gallery-controls{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+}
+.gallery-button{
+    background-color: transparent;
+    color: var(--color-pg);
+    font-size: 4rem;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+.gallery-button:hover {
+    color: var(--color-text);
+    transition: color 0.3s ease;
+}
+/* Hide the native radio */
+input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  border: 2px solid var(--color-pg);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+}
+/* Change border color on hover */
+input[type="radio"]:hover {
+    border-color: var(--color-text);
+}
+
+/* Green dot when checked */
+input[type="radio"]::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background-color: var(--color-pg);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+/* Change dot color on hover */
+input[type="radio"]:hover::after {
+  background-color: var(--color-text);
+}
+
+/* Show dot when checked */
+input[type="radio"]:checked::after {
+  opacity: 1;
 }
