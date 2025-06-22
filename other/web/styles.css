@@ -63,6 +63,7 @@
     100% {
         opacity: 0;
         transform: translate(0%, 50%);
+        pointer-events: none;
     }
 }
 @keyframes t {
@@ -200,8 +201,15 @@ body {
     flex: 1;
     padding: 20px;
 }
-.card-deck img{
+img{
     max-width: 100%;
+    max-height: 70%;
+    height: auto;
+    border-radius: 10px;
+}
+video {
+    max-width: 100%;
+    max-height: 70%;
     height: auto;
     border-radius: 10px;
 }
@@ -313,4 +321,13 @@ input[type="radio"]:hover::after {
 /* Show dot when checked */
 input[type="radio"]:checked::after {
   opacity: 1;
+}
+#background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-color: rgb(0, 0, 0, 0.3);
 }
