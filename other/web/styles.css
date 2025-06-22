@@ -84,17 +84,22 @@
     0% {
         width: 0vw;
         height: 0vh;
+        border-radius: 50%;
+        background-color: var(--color-text)
     }
 
     100% {
         width: 100%;
         height: 100%;
         border-radius: 0%;
+        background-color: var(--color-background);
     }
 }
 
 html {
     background-color: var(--color-background);
+    background-image: url("images/toutes-peuples.jpg");
+    background-size: 100% auto;
     scroll-behavior: smooth;
 }
 

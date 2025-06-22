@@ -51,7 +51,7 @@ function addCard(data, id){
     radio.addEventListener("change", () => {
         if (radio.checked) {
             gallery.children[radio.dataset.id].scrollIntoView({
-                behavior: "smooth"});
+                behavior: "smooth", block: "nearest"});
             currentChecked = radio.dataset.id;
         }
     });
@@ -65,7 +65,7 @@ function addCard(data, id){
     gallerySelectors.appendChild(radio);
     gallerySelectors.appendChild(label);
 }
-function next(){
+function next(scroll = true){
     if(currentChecked < all.length - 1){
         currentChecked++;
     } else {
@@ -87,3 +87,7 @@ function loadGallery() {
     }
 }
 loadGallery();
+function nextInterval(){
+    //next(false);
+}
+let interval = setInterval(nextInterval, 5000);
