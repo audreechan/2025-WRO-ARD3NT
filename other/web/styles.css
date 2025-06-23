@@ -1,6 +1,6 @@
 .main-theme {
     /* Default light mode styles */
-    --color-background: plum;
+    --color-background: blue;
     --color-text: rgb(138, 255, 138);
     --color-pg: rgb(255, 255, 255);
 }
