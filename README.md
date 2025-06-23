@@ -5,6 +5,9 @@
   <h2>Hello, we are ARD3NT</h2>
   <h3>Team Members: Jack Liu, Emily Luo, Audrey Chan</h3>
 
+
+  <h2>You can find our documentation at this link: </h2>
+
  <p>1. Code Modules</p>
         <ol>
             <li>a</li>
