@@ -7,8 +7,9 @@ const observer = new IntersectionObserver(entries => {
   });
 });
 
-document.querySelectorAll('p').forEach(el => {
+document.querySelectorAll('p:not(.no-fade),.custom-fader').forEach(el => {
   observer.observe(el);
+  console.log(el.innerHTML); // Debugging line to check content
 });
 
 const header = document.querySelectorAll('li');
