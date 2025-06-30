@@ -70,7 +70,7 @@ function addCard(data, id) {
     if (data.type === "image" || !data.type) {
         card.innerHTML = `<img src="images/gallery/${data.file}" alt="${data.title}">`;
     } else if (data.type === "video") {
-        card.innerHTML = `<video controls><source src="images/gallery/${data.file}" type="video/mp4">Your browser does not support the video tag.</video>`;
+        card.innerHTML = `<video controls playsinline><source src="images/gallery/${data.file}" type="video/mp4">Your browser does not support the video tag.</video>`;
         if (typeof card.children[0].loop == 'boolean') { // loop supported
             card.children[0].loop = true;
         } else { // loop property not supported

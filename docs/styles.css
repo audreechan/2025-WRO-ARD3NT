@@ -65,6 +65,7 @@
     border: 0px;
     padding: 0px;
     margin: 0px;
+    font-size: 8rem;
     z-index: -1;
     transform: translate(-50%, -50%);
     text-wrap: nowrap;

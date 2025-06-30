@@ -17,7 +17,7 @@ let lastScrollY = window.scrollY;
 window.addEventListener('scroll', () => {
   const currentScrollY = window.scrollY;
 
-  if (currentScrollY > 2000) {
+  if (currentScrollY > 0) {
     header.forEach(item => item.classList.add('shrunk'));
   } else {
     header.forEach(item => item.classList.remove('shrunk'));
