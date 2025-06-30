@@ -116,7 +116,8 @@
 html {
     background-color: var(--color-background);
     background-image: url("images/toutes-peuples.jpg");
-    background-size: 100% auto;
+    background-size: 100%;
+    background-repeat: no-repeat;
     scroll-behavior: smooth;
     overflow-x: hidden;
     max-width: 100%;
@@ -220,6 +221,7 @@ body {
 .card-deck div:not(.card-deck){
     flex: 1;
     padding: 20px;
+    min-width: 0;
 }
 img{
     max-width: 100%;
@@ -451,5 +453,11 @@ input[type="radio"]:checked::after {
     }
     .section {
         margin: 2%;
+    }
+}
+@media (max-width: 550px) {
+    .card-deck {
+        flex-direction: column;
+        align-items: center;
     }
 }
