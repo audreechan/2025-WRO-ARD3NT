@@ -117,7 +117,6 @@ html {
     background-color: var(--color-background);
     background-image: url("images/toutes-peuples.jpg");
     background-size: 100%;
-    background-repeat: no-repeat;
     scroll-behavior: smooth;
     overflow-x: hidden;
     max-width: 100%;
@@ -210,7 +209,7 @@ body {
 .polar{
     text-align: right;
 }
-.card-deck{
+.card-deck, .card-deck-stacked{
     text-align: center;
     display: flex;
     flex-direction: row;
@@ -221,6 +220,14 @@ body {
     flex: 1;
     padding: 20px;
     min-width: 0;
+}
+.card-deck-stacked div:not(.card-deck-stacked){
+    flex: 1;
+    padding: 20px;
+    min-width: 0;
+    flex-direction: column;
+    display: flex;
+    justify-content: space-between;
 }
 img{
     max-width: 100%;

@@ -4,13 +4,38 @@ const all = [
         "title": "Car",
         "description": "Side view of our car",
     },
+    {
+        "file": "top-finale.png",
+        "title": "Top View",
+        "description": "Top view of our car",
+    },
+    {
+        "file": "bottom-finale.png",
+        "title": "Bottom View",
+        "description": "Bottom view of our car",
+    },
+    {
+        "file": "left-finale.png",
+        "title": "Left Side View",
+        "description": "Left side view of our car",
+    },
+    {
+        "file": "right-finale.png",
+        "title": "Right Side View",
+        "description": "Right side view of our car",
+    },
+    {
+        "file": "back-finale.png",
+        "title": "Back View",
+        "description": "Back view of our car",
+    },
     /*{
         "file": "test.mp4",
         "title": "Test Video",
         "description": "A test video to demonstrate the gallery functionality. This video is a placeholder and does not represent any actual content.",
         "type": "video"
     },*/
-    {
+    /*{
         "file": "jacques-travailler.mp4",
         "title": "Jack Working",
         "description": "A video of Jack working on the project. This video showcases the development process and the effort put into creating the website.",
@@ -27,7 +52,7 @@ const all = [
         "title": "Audrey Working",
         "description": "A video of Audrey working on the project. This video showcases the dedication and hard work put into the team videos.",
         "type": "video"
-    },
+    },*/
     {
         "file": "toutlequipe-travailler.mp4",
         "title": "The Whole Team Working",
