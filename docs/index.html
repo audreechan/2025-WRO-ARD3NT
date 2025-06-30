@@ -134,7 +134,7 @@
                 <button onclick="toggleAllDiagramText()" class="bouton">Show/Hide All</button>
             </div>
             <div id="interactive-diagram">
-                <img src="images/voiture-top.png" alt="Chassis Diagram" class="chassis-diagram">
+                <img src="images/voiture-top.png" class="unviewable" alt="Chassis Diagram" class="chassis-diagram">
                 <div id="4wd">
                     <div id="4wd">
                         <div class="diagram-component diagram-controller" style="top: 50%; left: 25%;">
@@ -265,6 +265,10 @@
                 </ul>
             </nav>
         </footer>
+    </div>
+    <div id="image-viewer">
+        <div id="image-viewer-close" class="anton" onclick="document.getElementById('image-viewer').style.display='none';">Exit ✖</div>
+        <img id="image-viewer-img" src="icon.png" alt="">
     </div>
     <script src="script.js"></script>
     <script>
