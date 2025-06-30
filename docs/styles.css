@@ -42,7 +42,6 @@
     }
 }
 #scroll-indicator{
-    z-index: -1;
     color: var(--color-text);
 }
 
@@ -198,6 +197,7 @@ body {
 #content {
     background-color: var(--color-background);
     color: var(--color-text);
+    z-index: 1;
 }
 
 .section {

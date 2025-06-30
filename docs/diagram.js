@@ -26,6 +26,17 @@ Array.from(diagram.getElementsByClassName("diagram-controller")).forEach(control
         let targetDiagram = controller.parentNode.querySelector(`.diagram-text`);
 
         if (targetDiagram) {
+            // If we have a locked diagram and it's not the one we clicked, unlock it
+            if (locked && locked !== targetDiagram) {
+                locked.classList.remove("lock-visible");
+                locked.classList.remove("visible");
+                // Remove active class from the previous controller
+                let previousController = locked.previousElementSibling;
+                if (previousController) {
+                    previousController.classList.remove("active");
+                }
+                locked = null; // Clear the locked state
+            }
             // Toggle visibility of the target diagram on click
             targetDiagram.classList.toggle("lock-visible");
             if(targetDiagram.classList.contains("lock-visible")) {
@@ -51,11 +62,21 @@ diagram.addEventListener("click", (event) => {
     }
 });
 function toggleAllDiagramText() {
+    //unlock locked if it exists
+    if (locked) {
+        locked.classList.remove("lock-visible");
+        locked.classList.remove("visible");
+        // Remove active class from the previous controller
+        let previousController = locked.previousElementSibling;
+        if (previousController) {
+            previousController.classList.remove("active");
+        }
+        locked = null; // Clear the locked state
+    }
     Array.from(diagram.getElementsByClassName("diagram-text")).forEach(text => {
         text.classList.toggle("lock-visible");
     });
     Array.from(diagram.getElementsByClassName("diagram-controller")).forEach(controller => {
         controller.classList.toggle("active");
     });
-    locked = locked ? null : true;
 }
