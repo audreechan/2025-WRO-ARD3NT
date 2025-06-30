@@ -199,7 +199,6 @@ body {
 #content {
     background-color: var(--color-background);
     color: var(--color-text);
-    font-size: clamp(12px, 1.5vw, 18px);
 }
 
 .section {
