@@ -50,3 +50,12 @@ diagram.addEventListener("click", (event) => {
         locked = null;
     }
 });
+function toggleAllDiagramText() {
+    Array.from(diagram.getElementsByClassName("diagram-text")).forEach(text => {
+        text.classList.toggle("lock-visible");
+    });
+    Array.from(diagram.getElementsByClassName("diagram-controller")).forEach(controller => {
+        controller.classList.toggle("active");
+    });
+    locked = locked ? null : true;
+}
