@@ -22,6 +22,7 @@
     <div id="content">
         <header>
             <nav>
+                <button class="hamburger" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links anton-light">
                     <li><a href="#section-pictures">Videos & Pictures</a></li>
                     <li><a href="#section-mobility">Mobility Management</a></li>
@@ -252,6 +253,16 @@
         </footer>
     </div>
     <script src="script.js"></script>
+    <script>
+        function toggleMenu() {
+            document.querySelector('.nav-links').classList.toggle('show');
+        }
+        document.querySelectorAll("nav li").forEach(item => {
+            item.addEventListener("click", () => {
+                document.querySelector('.nav-links').classList.remove('show');
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -43,6 +43,9 @@
         animation-range: 100vh 140vh;
     }
 }
+#scroll-indicator{
+    z-index: -1;
+}
 
 #plume {
     position: fixed;
@@ -114,6 +117,8 @@ html {
     background-image: url("images/toutes-peuples.jpg");
     background-size: 100% auto;
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 .anton {
@@ -192,6 +197,7 @@ body {
 #content {
     background-color: var(--color-background);
     color: var(--color-text);
+    font-size: clamp(12px, 1.5vw, 18px);
 }
 
 .section {
@@ -395,4 +401,54 @@ input[type="radio"]:checked::after {
     color: var(--color-text);
     font-size: 2rem;
     margin: 1%;
+}
+/* Hide hamburger by default */
+.hamburger {
+    display: none;
+    font-size: 2rem;
+    background: none;
+    border: none;
+    color: var(--color-text);
+    cursor: pointer;
+    padding: 10px;
+    z-index: 110;
+}
+
+/* Hide nav links on small screens */
+@media (max-width: 768px) {
+    .hamburger {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--color-background);
+        border-top: 2px solid var(--color-text);
+        z-index: 100;
+    }
+    .nav-links-footer{
+        display: none;
+    }
+
+    .nav-links.show {
+        display: flex;
+    }
+
+    .nav-links li {
+        font-size: 1.2rem;
+        padding: 10px;
+        border-bottom: 1px solid var(--color-text);
+    }
+
+    .nav-links li.anton {
+        font-size: 2rem;
+    }
+    .section {
+        margin: 2%;
+    }
 }
