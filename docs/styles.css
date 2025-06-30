@@ -179,7 +179,7 @@ p:not(.no-fade):not(.visible),.custom-fader{
     transition: opacity 0.3s ease-out, transform 0.3s ease-out;
 }
 
-.visible {
+.visible, .lock-visible {
     opacity: 1;
     transform: translateY(0);
     transition: opacity 0.3s ease-out, transform 0.3s ease-out;
@@ -352,7 +352,7 @@ input[type="radio"]:checked::after {
 #interactive-diagram img {
     width: 100%;
     height: 100%;
-    padding: 25% 0;
+    padding: 5% 0;
 }
 .diagram-controller {
     position: absolute;
@@ -362,6 +362,26 @@ input[type="radio"]:checked::after {
     border-radius: 50%;
     transform: translate(-50%, -50%);
     opacity: 0.6;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+}
+.diagram-controller:hover {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    background-color: transparent;
+    border: 0.1em solid var(--color-text);
+}
+.diagram-connector-vertical{
+    position: absolute;
+    width: 0.2vw;
+    background-color: var(--color-text);
+    transform: translateX(-50%);
+}
+.diagram-connector-horizontal{
+    position: absolute;
+    height: 0.2vw;
+    background-color: var(--color-text);
+    transform: translateY(-50%);
 }
 .diagram-text{
     position: absolute;
