@@ -22,7 +22,6 @@
         animation: t linear forwards;
         animation-timeline: scroll();
         animation-range: 0vh 100vh;
-        color: var(--color-text);
     }
 }
 
@@ -31,7 +30,6 @@
         animation: scind linear forwards;
         animation-timeline: scroll();
         animation-range: 0vh 20vh;
-        color: var(--color-text);
     }
 }
 
@@ -45,6 +43,7 @@
 }
 #scroll-indicator{
     z-index: -1;
+    color: var(--color-text);
 }
 
 #plume {
@@ -60,6 +59,7 @@
 
 #title {
     position: fixed;
+    color: var(--color-text);
     top: 50%;
     left: 50%;
     border: 0px;
