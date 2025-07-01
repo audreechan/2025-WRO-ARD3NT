@@ -441,7 +441,7 @@ input[type="radio"]:checked::after {
         border-top: 2px solid var(--color-text);
         z-index: 100;
     }
-    .nav-links-footer{
+    .nav-links-footer li:not(.copyright){
         display: none;
     }
 
