@@ -7,8 +7,10 @@ const observer = new IntersectionObserver(entries => {
   });
 });
 
-document.querySelectorAll('p:not(.no-fade)').forEach(el => {
-  observer.observe(el);
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('p:not(.no-fade)').forEach(el => {
+    observer.observe(el);
+  });
 });
 
 const header = document.querySelectorAll('li');
@@ -24,14 +26,13 @@ window.addEventListener('scroll', () => {
   }
 
   lastScrollY = currentScrollY;
-});
-
-// Image viewer functionality
-document.querySelectorAll('img:not(.unviewable)').forEach(img => {
-  img.addEventListener('click', () => {
-    const viewer = document.getElementById('image-viewer');
-    const viewerImg = document.getElementById('image-viewer-img');
-    viewerImg.src = img.src;
-    viewer.style.display = 'flex';
+  // Image viewer functionality
+  document.querySelectorAll('img:not(.unviewable)').forEach(img => {
+    img.addEventListener('click', () => {
+      const viewer = document.getElementById('image-viewer');
+      const viewerImg = document.getElementById('image-viewer-img');
+      viewerImg.src = img.src;
+      viewer.style.display = 'flex';
+    });
   });
 });

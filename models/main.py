@@ -91,6 +91,7 @@ def gauche_ou_droit(model, image):
         print("No car detected.")
     # Save the output image
     output_path = "cars_detected.jpg"
+    #TODO
     cv2.imwrite(output_path, image)
     print(f"Saved image with car detections to '{output_path}'")
     res = {
@@ -108,16 +109,8 @@ if __name__ == '__main__':
     backward = -0.3
     stop = 0
     back_up_size_threshold = 1000
-    ##piracer = PiRacerPro()
-    # piracer = PiRacerStandard()
-
-    ##piracer.set_steering_percent(straight)
-
-    # Forward
-    ##piracer.set_throttle_percent(stop)
+    piracer = PiRacerPro()
     picam2 = Picamera2()
-    #config = picam2.create_video_configuration(main={"size":(640,480)}, transform=Transform(vflip = True))
-    #picam2.configure(config)
     picam2.start()
     time.sleep(2)  # let camera warm up
     not_done = True

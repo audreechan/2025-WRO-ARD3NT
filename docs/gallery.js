@@ -1,4 +1,4 @@
-const all = [
+let all = [
     {
         "file": "voiture.png",
         "title": "Car",
@@ -146,7 +146,7 @@ function addCard(data, id) {
     gallerySelectors.appendChild(radio);
     gallerySelectors.appendChild(label);
 }
-function next(scroll = true) {
+window.next = function(scroll = true) {
     let nextChecked = 0;
     if (currentChecked < all.length - 1) {
         nextChecked = currentChecked + 1;
@@ -155,7 +155,7 @@ function next(scroll = true) {
     }
     document.getElementById(`gallery-${nextChecked}`).click();
 }
-function previous(scroll = true) {
+window.previous = function(scroll = true) {
     let nextChecked = 0;
     if (currentChecked > 0) {
         nextChecked = currentChecked - 1;

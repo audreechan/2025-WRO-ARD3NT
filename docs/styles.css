@@ -281,27 +281,27 @@ video {
     display: flex;
     flex-direction: column;
 }
-#gallery {
+#gallery, #schematic {
     display: flex;
     flex-direction: row;
     overflow: hidden;
 }
-#gallery-selectors{
+#gallery-selectors, #schematic-selectors {
     display: flex;
     flex-direction: row;
     overflow: hidden;
     justify-content: center;
 }
-.gallery-card{
+.gallery-card, .schematic-card {
     text-align: center;
 }
-#gallery-controls{
+#gallery-controls, #schematic-controls {
     display: flex;
     flex-direction: row;
     justify-content: center;
     width: 100%;
 }
-.gallery-button{
+.gallery-button, .schematic-button {
     background-color: transparent;
     color: var(--color-pg);
     font-size: 4rem;
@@ -309,7 +309,12 @@ video {
     cursor: pointer;
     transition: color 0.3s ease;
 }
-.gallery-button:hover {
+.gallery-button:disabled, .schematic-button:disabled {
+    color: transparent;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.gallery-button:hover, .schematic-button:hover {
     color: var(--color-text);
     transition: color 0.3s ease;
 }

@@ -112,18 +112,18 @@
         <div id="section-pictures" class="section polar">
             <h1 class="anton">VIDEOS AND PICTURES</h1>
             <div id="gallery-controls">
-                <button id="gallery-left" class="gallery-button" onclick="previous()">
+                <button id="gallery-left" class="gallery-button" onclick="window.previous()">
                     &lt;
                 </button>
                 <div id="gallery">
                 </div>
-                <button id="gallery-right" class="gallery-button" onclick="next()">
+                <button id="gallery-right" class="gallery-button" onclick="window.next()">
                     &gt;
                 </button>
             </div>
             <div id="gallery-selectors">
             </div>
-            <script src="gallery.js"></script>
+            <script src="gallery.js" type="module"></script>
         </div>
         <div id="section-mobility" class="section">
             <h1 class="anton">MOBILITY MANAGEMENT</h1>
@@ -221,8 +221,21 @@
         <div id="section-obstacles" class="section">
             <h1 class="anton">OBSTACLE MANAGEMENT</h1>
             <div class="pg">
-                <p>Our robot uses a camera to perform real-time image analysis in order to autonomously complete all challenges on the WRO Future Engineers Division obstacle course. Instead of relying on basic hardware sensors, we use computer vision techniques to follow the path and detect obstacles. The camera continuously captures frames that are processed in Python. From the visual input, we analyze the color and shape of the path, identify obstacles. The camera serves as the robot's primary sensor, and all decisions are made based on what it sees in real time.</p>
+                <p>Our robot uses a camera to perform real-time image analysis in order to autonomously detect and pass obstacles correctly as well as stay on the correct path.</p>
             </div>
+            <div id="schematic-controls">
+                <button id="schematic-left" class="schematic-button" onclick="window.schematicPrevious()">
+                    &lt;
+                </button>
+                <div id="schematic">
+                </div>
+                <button id="schematic-right" class="schematic-button" onclick="window.schematicNext()">
+                    &gt;
+                </button>
+            </div>
+            <div id="schematic-selectors">
+            </div>
+            <script src="schematic.js" type="module"></script>
         </div>
         <div id="section-engineering" class="section polar">
             <h1 class="anton">ENGINEERING FACTOR</h1>
