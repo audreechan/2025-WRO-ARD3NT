@@ -3,9 +3,13 @@ import time
 from ultralytics import YOLO
 import cv2
 import numpy as np
+from picamera2 import Picamera2
 
 #Change to use piracer camera later
-def prendre_image():
+def prendre_image(camera):
+    if camera is not None:
+        image = camera.capture_array()
+        return image
     # Load the image
     image_path = "test.png"
     image = cv2.imread(image_path)
@@ -111,7 +115,11 @@ if __name__ == '__main__':
 
     # Forward
     ##piracer.set_throttle_percent(stop)
-
+    picam2 = Picamera2()
+    #config = picam2.create_video_configuration(main={"size":(640,480)}, transform=Transform(vflip = True))
+    #picam2.configure(config)
+    picam2.start()
+    time.sleep(2)  # let camera warm up
     not_done = True
     model = YOLO("yolov8n.pt")  # COCO-trained model
     #start main loop
@@ -121,7 +129,7 @@ if __name__ == '__main__':
         #Get image from camera
 
         #Identify obstacles
-        ob_res = gauche_ou_droit(model, prendre_image())
+        ob_res = gauche_ou_droit(model, prendre_image(picam2))
 
         #If obstacle is large, stop and back up until it is small enough(farther)
         if ob_res["size"] > back_up_size_threshold:

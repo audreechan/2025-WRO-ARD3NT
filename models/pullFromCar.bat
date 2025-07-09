@@ -1,1 +1,1 @@
-scp jack022607@donkeycar.local:~/pytest/main.py C:\Users\micha\Documents\GitHub\2025-WRO-ARD3NT\models\main.py
+scp -r jack022607@donkeycar.local:~/pytest/models C:\Users\micha\Documents\GitHub\2025-WRO-ARD3NT
