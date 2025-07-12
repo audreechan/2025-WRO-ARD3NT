@@ -1,10 +1,5 @@
 let all = [
     {
-        "file": "voiture.png",
-        "title": "Car",
-        "description": "Side view of our car",
-    },
-    {
         "file": "top-finale.png",
         "title": "Top View",
         "description": "Top view of our car",
@@ -28,6 +23,11 @@ let all = [
         "file": "back-finale.png",
         "title": "Back View",
         "description": "Back view of our car",
+    },
+    {
+        "file": "voiture-bb.png",
+        "title": "Car Wiring Diagram",
+        "description": "Wiring diagram of the car, showing how the components are connected.",
     },
     /*{
         "file": "test.mp4",

@@ -1,5 +1,5 @@
 import time
-##from piracer.vehicles import PiRacerPro
+from piracer.vehicles import PiRacerPro
 from ultralytics import YOLO
 import cv2
 import numpy as np
@@ -9,6 +9,14 @@ from picamera2 import Picamera2
 def prendre_image(camera):
     if camera is not None:
         image = camera.capture_array()
+        if image.shape[2] == 4:
+            image = cv2.cvtColor(image, cv2.COLOR_RGBA2RGB)
+
+        # Convert RGB to BGR for OpenCV processing
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+        # Optionally flip the image vertically
+        image = cv2.flip(image, 0)
         return image
     # Load the image
     image_path = "test.png"
@@ -87,6 +95,7 @@ def gauche_ou_droit(model, image):
             print("The largest car bounding box contains mostly GREEN.")
         else:
             print("The largest car bounding box contains neither color predominantly.")
+        color = "red" if red_pixels > green_pixels else "green" if green_pixels > red_pixels else "none"
     else:
         print("No car detected.")
     # Save the output image
@@ -96,7 +105,7 @@ def gauche_ou_droit(model, image):
     print(f"Saved image with car detections to '{output_path}'")
     res = {
         "size": largest_area,
-        "color": "red" if red_pixels > green_pixels else "green" if green_pixels > red_pixels else "none",
+        "color": color if color else "?",
         "position": "right" if box_center_x > image_center_x else "left"
     }
     return res
