@@ -7,7 +7,7 @@ const PORT = 3000;
 
 // Path to the folder containing the image
 const IMAGE_FOLDER = path.join(__dirname, "");
-const IMAGE_NAME = "cars_detected.jpg"; // this is the image that will be updated
+const IMAGE_NAME = "color_detected.jpg"; // this is the image that will be updated
 
 // Serve static files from the image folder
 app.use("/images", express.static(IMAGE_FOLDER));

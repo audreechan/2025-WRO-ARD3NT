@@ -25,13 +25,17 @@ def prendre_image(camera):
 def gauche_ou_droit_alt(model, image):
     image_height, image_width = image.shape[:2]
 
-    # Draw a blue rectangle over the whole image
-    cv2.rectangle(image, (0, 0), (image_width - 1, image_height - 1), (255, 0, 0), 3)
+    # Focus only on the top 60% of the image
+    top_60_height = int(image_height * 0.6)
+    roi = image[0:top_60_height, :]
 
-    # Convert to HSV for better color segmentation
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    # Draw a blue rectangle over the region being analyzed (for visualization)
+    cv2.rectangle(image, (0, 0), (image_width - 1, top_60_height - 1), (255, 0, 0), 3)
 
-    # Red mask (2 ranges due to HSV wraparound)
+    # Convert ROI to HSV
+    hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
+
+    # Red mask (HSV wraparound)
     lower_red1 = np.array([0, 100, 100])
     upper_red1 = np.array([10, 255, 255])
     lower_red2 = np.array([160, 100, 100])
@@ -46,13 +50,12 @@ def gauche_ou_droit_alt(model, image):
     upper_green = np.array([85, 255, 255])
     green_mask = cv2.inRange(hsv, lower_green, upper_green)
 
-    # Count pixels
+    # Count color pixels
     red_pixels = cv2.countNonZero(red_mask)
     green_pixels = cv2.countNonZero(green_mask)
 
-    print(f"Red pixels: {red_pixels}, Green pixels: {green_pixels}")
+    print(f"[Top 60%] Red pixels: {red_pixels}, Green pixels: {green_pixels}")
 
-    # Determine dominant color and its "position"
     if red_pixels > green_pixels:
         color = "red"
         position = "right"
@@ -69,16 +72,13 @@ def gauche_ou_droit_alt(model, image):
     # Save debug image
     output_path = "color_detected.jpg"
     cv2.imwrite(output_path, image)
-    print(f"Saved image with blue border to '{output_path}'")
+    print(f"Saved image with top 60% region outlined to '{output_path}'")
 
-    # Return result
-    res = {
+    return {
         "size": largest_area,
         "color": color,
         "position": position
     }
-    print(res)
-    return res
 #Tell if obstacle is on the left or right, and if it is red or green, and its size
 def gauche_ou_droit(model, image):
     image_height, image_width = image.shape[:2]
@@ -156,8 +156,8 @@ def gauche_ou_droit(model, image):
         red_mask = cv2.bitwise_or(red_mask1, red_mask2)
         green_mask = cv2.inRange(hsv, lower_green, upper_green)
 
-        red_pixels = blue_pixels#cv2.countNonZero(red_mask)
-        green_pixels = orange_pixels#cv2.countNonZero(green_mask)
+        red_pixels = cv2.countNonZero(red_mask)
+        green_pixels = cv2.countNonZero(green_mask)
 
         if red_pixels > green_pixels:
             print("The largest car bounding box contains mostly RED.")
@@ -252,7 +252,7 @@ if __name__ == '__main__':
         else:
             piracer.set_throttle_percent(stop)
             pass
-        #time.sleep(0.2)
+        time.sleep(0.1)
         #not_done = False
 """
 Main Loop:
