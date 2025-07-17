@@ -22,7 +22,63 @@ def prendre_image(camera):
     image_path = "test.png"
     image = cv2.imread(image_path)
     return image
+def gauche_ou_droit_alt(model, image):
+    image_height, image_width = image.shape[:2]
 
+    # Draw a blue rectangle over the whole image
+    cv2.rectangle(image, (0, 0), (image_width - 1, image_height - 1), (255, 0, 0), 3)
+
+    # Convert to HSV for better color segmentation
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    # Red mask (2 ranges due to HSV wraparound)
+    lower_red1 = np.array([0, 100, 100])
+    upper_red1 = np.array([10, 255, 255])
+    lower_red2 = np.array([160, 100, 100])
+    upper_red2 = np.array([180, 255, 255])
+
+    red_mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
+    red_mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
+    red_mask = cv2.bitwise_or(red_mask1, red_mask2)
+
+    # Green mask
+    lower_green = np.array([35, 100, 100])
+    upper_green = np.array([85, 255, 255])
+    green_mask = cv2.inRange(hsv, lower_green, upper_green)
+
+    # Count pixels
+    red_pixels = cv2.countNonZero(red_mask)
+    green_pixels = cv2.countNonZero(green_mask)
+
+    print(f"Red pixels: {red_pixels}, Green pixels: {green_pixels}")
+
+    # Determine dominant color and its "position"
+    if red_pixels > green_pixels:
+        color = "red"
+        position = "right"
+        largest_area = red_pixels
+    elif green_pixels > red_pixels:
+        color = "green"
+        position = "left"
+        largest_area = green_pixels
+    else:
+        color = "none"
+        position = "none"
+        largest_area = 0
+
+    # Save debug image
+    output_path = "color_detected.jpg"
+    cv2.imwrite(output_path, image)
+    print(f"Saved image with blue border to '{output_path}'")
+
+    # Return result
+    res = {
+        "size": largest_area,
+        "color": color,
+        "position": position
+    }
+    print(res)
+    return res
 #Tell if obstacle is on the left or right, and if it is red or green, and its size
 def gauche_ou_droit(model, image):
     image_height, image_width = image.shape[:2]
@@ -31,8 +87,8 @@ def gauche_ou_droit(model, image):
     # Run inference
     results = model(image)[0]
 
-    # COCO class ID for "car" is 2
-    car_class_id = 2
+    # COCO class ID for "car" is 2, bowl is 51
+    car_class_id = 41
 
     largest_box = None
     largest_area = 0
@@ -55,7 +111,7 @@ def gauche_ou_droit(model, image):
 
             # Draw bounding box and label
             cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
-            label = f"Car {conf:.2f}"
+            label = f"Cup {conf:.2f}"
             cv2.putText(image, label, (x1, y1 - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
             area = (x2 - x1) * (y2 - y1)
@@ -70,6 +126,20 @@ def gauche_ou_droit(model, image):
 
         # Convert to HSV for better color segmentation
         hsv = cv2.cvtColor(crop, cv2.COLOR_BGR2HSV)
+
+        # Define blue mask
+        lower_blue = np.array([100, 100, 100])
+        upper_blue = np.array([130, 255, 255])
+
+        # Define orange mask
+        lower_orange = np.array([10, 100, 100])
+        upper_orange = np.array([25, 255, 255])
+
+        blue_mask = cv2.inRange(hsv, lower_blue, upper_blue)
+        orange_mask = cv2.inRange(hsv, lower_orange, upper_orange)
+
+        blue_pixels = cv2.countNonZero(blue_mask)
+        orange_pixels = cv2.countNonZero(orange_mask)
 
         # Define red mask (two ranges due to HSV wraparound)
         lower_red1 = np.array([0, 100, 100])
@@ -86,8 +156,8 @@ def gauche_ou_droit(model, image):
         red_mask = cv2.bitwise_or(red_mask1, red_mask2)
         green_mask = cv2.inRange(hsv, lower_green, upper_green)
 
-        red_pixels = cv2.countNonZero(red_mask)
-        green_pixels = cv2.countNonZero(green_mask)
+        red_pixels = blue_pixels#cv2.countNonZero(red_mask)
+        green_pixels = orange_pixels#cv2.countNonZero(green_mask)
 
         if red_pixels > green_pixels:
             print("The largest car bounding box contains mostly RED.")
@@ -103,21 +173,23 @@ def gauche_ou_droit(model, image):
     #TODO
     cv2.imwrite(output_path, image)
     print(f"Saved image with car detections to '{output_path}'")
+    print("largest_area:", largest_area)
     res = {
         "size": largest_area,
-        "color": color if color else "?",
-        "position": "right" if box_center_x > image_center_x else "left"
+        "color": color if 'color' in locals() else "?",
+        "position": ("right" if box_center_x > image_center_x else "left") if 'box_center_x' in locals() and 'image_center_x' in locals() else "none"
     }
+    print(res["position"])
     return res
 
 if __name__ == '__main__':
     straight = -0.225
     left = -1
     right = 1
-    forward = 0.3
-    backward = -0.3
+    forward = 0.22
+    backward = -0.22
     stop = 0
-    back_up_size_threshold = 1000
+    back_up_size_threshold = 50000
     piracer = PiRacerPro()
     picam2 = Picamera2()
     picam2.start()
@@ -131,7 +203,7 @@ if __name__ == '__main__':
         #Get image from camera
 
         #Identify obstacles
-        ob_res = gauche_ou_droit(model, prendre_image(picam2))
+        ob_res = gauche_ou_droit_alt(model, prendre_image(picam2))
 
         #If obstacle is large, stop and back up until it is small enough(farther)
         if ob_res["size"] > back_up_size_threshold:
@@ -155,32 +227,32 @@ if __name__ == '__main__':
 
         #Execute the movement
         if speed == "forward":
-            ##piracer.set_throttle_percent(forward)
+            piracer.set_throttle_percent(forward)
             if direction == "straight":
-                ##piracer.set_steering_percent(straight)
+                piracer.set_steering_percent(straight)
                 pass
             elif direction == "left":
-                ##piracer.set_steering_percent(left)
+                piracer.set_steering_percent(left)
                 pass
             elif direction == "right":
-                ##piracer.set_steering_percent(right)
+                piracer.set_steering_percent(right)
                 pass
         elif speed == "back":
-            ##piracer.set_throttle_percent(backward)
+            piracer.set_throttle_percent(backward)
             if direction == "straight":
-                ##piracer.set_steering_percent(straight)
+                piracer.set_steering_percent(straight)
                 pass
             # FLIP
             elif direction == "left":
-                ##piracer.set_steering_percent(right)
+                piracer.set_steering_percent(right)
                 pass
             elif direction == "right":
-                ##piracer.set_steering_percent(left)
+                piracer.set_steering_percent(left)
                 pass
         else:
-            ##piracer.set_throttle_percent(stop)
+            piracer.set_throttle_percent(stop)
             pass
-        time.sleep(0.2)
+        #time.sleep(0.2)
         #not_done = False
 """
 Main Loop:
