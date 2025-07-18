@@ -1,9 +1,9 @@
 import time
-from piracer.vehicles import PiRacerPro
+#from piracer.vehicles import PiRacerPro
 from ultralytics import YOLO
 import cv2
 import numpy as np
-from picamera2 import Picamera2
+#from picamera2 import Picamera2
 import math
 
 #Change to use piracer camera later
@@ -342,9 +342,9 @@ if __name__ == '__main__':
     backward = -0.24
     stop = 0
     back_up_size_threshold = 30000
-    piracer = PiRacerPro()
-    picam2 = Picamera2()
-    picam2.start()
+    #piracer = PiRacerPro()
+    #picam2 = Picamera2()
+    #picam2.start()
     time.sleep(2)  # let camera warm up
     not_done = True
     #model = YOLO("yolov8n.pt")  # COCO-trained model
@@ -355,7 +355,8 @@ if __name__ == '__main__':
         #Get image from camera
 
         #Identify obstacles
-        image = prendre_image(picam2)
+        image = prendre_image(None)
+        detect_lines(image)
         ob_res = gauche_ou_droit_alt(image)
         magnitude = 1
         #If obstacle is large, stop and back up until it is small enough(farther)
@@ -393,30 +394,30 @@ if __name__ == '__main__':
         print(f"Direction: {direction}, Speed: {speed}, Magnitude: {magnitude}")
         #Execute the movement
         if speed == "forward":
-            piracer.set_throttle_percent(forward)
+            #piracer.set_throttle_percent(forward)
             if direction == "straight":
-                piracer.set_steering_percent(straight)
+                #piracer.set_steering_percent(straight)
                 pass
             elif direction == "left":
-                piracer.set_steering_percent(left*magnitude)
+                #piracer.set_steering_percent(left*magnitude)
                 pass
             elif direction == "right":
-                piracer.set_steering_percent(right*magnitude)
+                #piracer.set_steering_percent(right*magnitude)
                 pass
         elif speed == "back":
-            piracer.set_throttle_percent(backward)
+            #piracer.set_throttle_percent(backward)
             if direction == "straight":
-                piracer.set_steering_percent(straight)
+                #   piracer.set_steering_percent(straight)
                 pass
             # FLIP
             elif direction == "left":
-                piracer.set_steering_percent(right*magnitude)
+                #piracer.set_steering_percent(right*magnitude)
                 pass
             elif direction == "right":
-                piracer.set_steering_percent(left*magnitude)
+                #piracer.set_steering_percent(left*magnitude)
                 pass
         else:
-            piracer.set_throttle_percent(stop)
+            #piracer.set_throttle_percent(stop)
             pass
         time.sleep(0.05)
         #not_done = False
