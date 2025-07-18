@@ -22,62 +22,163 @@ def prendre_image(camera):
     image_path = "test.png"
     image = cv2.imread(image_path)
     return image
-def gauche_ou_droit_alt(model, image):
+#Detects far away objects so that the car can adjust to face them
+def trouver(image):
     image_height, image_width = image.shape[:2]
+    image_center_x = image_width // 2
 
-    # Focus only on the top 60% of the image
-    top_60_height = int(image_height * 0.6)
-    roi = image[0:top_60_height, :]
+    # Focus on bottom 60% of the image
+    start_y = int(image_height * 0.4)
+    end_y = int(image_height * 0.55)
+    roi = image[start_y:end_y, :]
 
-    # Draw a blue rectangle over the region being analyzed (for visualization)
-    cv2.rectangle(image, (0, 0), (image_width - 1, top_60_height - 1), (255, 0, 0), 3)
+    # Draw a rectangle around ROI
+    cv2.rectangle(image, (0, start_y), (image_width - 1, end_y - 1), (255, 0, 0), 3)
 
     # Convert ROI to HSV
     hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
 
-    # Red mask (HSV wraparound)
+    # Red mask
     lower_red1 = np.array([0, 100, 100])
     upper_red1 = np.array([10, 255, 255])
     lower_red2 = np.array([160, 100, 100])
     upper_red2 = np.array([180, 255, 255])
-
-    red_mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
-    red_mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
-    red_mask = cv2.bitwise_or(red_mask1, red_mask2)
+    red_mask = cv2.bitwise_or(
+        cv2.inRange(hsv, lower_red1, upper_red1),
+        cv2.inRange(hsv, lower_red2, upper_red2)
+    )
 
     # Green mask
     lower_green = np.array([35, 100, 100])
     upper_green = np.array([85, 255, 255])
     green_mask = cv2.inRange(hsv, lower_green, upper_green)
 
-    # Count color pixels
-    red_pixels = cv2.countNonZero(red_mask)
-    green_pixels = cv2.countNonZero(green_mask)
+    # Find contours for both colors
+    red_contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    green_contours, _ = cv2.findContours(green_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    print(f"[Top 60%] Red pixels: {red_pixels}, Green pixels: {green_pixels}")
+    # Find largest red or green contour
+    largest_contour = None
+    largest_area = 0
+    color = "none"
+    centroid_x = -1
 
-    if red_pixels > green_pixels:
-        color = "red"
-        position = "right"
-        largest_area = red_pixels
-    elif green_pixels > red_pixels:
-        color = "green"
-        position = "left"
-        largest_area = green_pixels
+    for cnt, col in [(red_contours, "red"), (green_contours, "green")]:
+        if cnt:
+            biggest = max(cnt, key=cv2.contourArea)
+            area = cv2.contourArea(biggest)
+            if area > largest_area:
+                largest_area = area
+                largest_contour = (biggest, col)
+
+    # Draw and compute centroid
+    if largest_contour:
+        cnt, color = largest_contour
+        M = cv2.moments(cnt)
+        if M["m00"] != 0:
+            cx = int(M["m10"] / M["m00"])
+            cy = int(M["m01"] / M["m00"]) + start_y  # offset to image coords
+            centroid_x = cx
+
+            # Draw centroid
+            cv2.circle(image, (cx, cy), 5, (0, 255, 255), -1)
+            cv2.putText(image, f"{color} center", (cx + 5, cy - 5),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 1)
+
+            print(f"{color.title()} centroid at: ({cx}, {cy})")
+        else:
+            print(f"{color.title()} blob found but area was zero")
     else:
-        color = "none"
-        position = "none"
-        largest_area = 0
+        print("No red or green blobs detected")
 
     # Save debug image
-    output_path = "color_detected.jpg"
+    output_path = "high_mask.jpg"
     cv2.imwrite(output_path, image)
-    print(f"Saved image with top 60% region outlined to '{output_path}'")
+    print(f"Saved image with centroid to '{output_path}'")
+    return {
+        "size": largest_area,
+        "color": color,
+        "position": max(-1.0, min(1.0, (centroid_x - image_center_x) / (image_width / 2))) if centroid_x != -1 else "none"  # this is the x-coordinate or "none"
+    }
+#Detects closer objects so that the car can pass them correctly
+def gauche_ou_droit_alt(image):
+    image_height, image_width = image.shape[:2]
+    image_center_x = image_width // 2
+
+    # Focus on bottom 60% of the image
+    start_y = int(image_height * 0.55)
+    start_x = int(image_width * 0.1)
+    end_x = int(image_width * 0.9)
+    roi = image[start_y:, start_x:end_x]
+
+    # Draw a rectangle around ROI
+    cv2.rectangle(image, (start_x, start_y), (end_x - 1, image_height - 1), (255, 0, 0), 3)
+
+    # Convert ROI to HSV
+    hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
+
+    # Red mask
+    lower_red1 = np.array([0, 100, 100])
+    upper_red1 = np.array([10, 255, 255])
+    lower_red2 = np.array([160, 100, 100])
+    upper_red2 = np.array([180, 255, 255])
+    red_mask = cv2.bitwise_or(
+        cv2.inRange(hsv, lower_red1, upper_red1),
+        cv2.inRange(hsv, lower_red2, upper_red2)
+    )
+
+    # Green mask
+    lower_green = np.array([35, 100, 100])
+    upper_green = np.array([85, 255, 255])
+    green_mask = cv2.inRange(hsv, lower_green, upper_green)
+
+    # Find contours for both colors
+    red_contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    green_contours, _ = cv2.findContours(green_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Find largest red or green contour
+    largest_contour = None
+    largest_area = 0
+    color = "none"
+    centroid_x = -1
+
+    for cnt, col in [(red_contours, "red"), (green_contours, "green")]:
+        if cnt:
+            biggest = max(cnt, key=cv2.contourArea)
+            area = cv2.contourArea(biggest)
+            if area > largest_area:
+                largest_area = area
+                largest_contour = (biggest, col)
+
+    # Draw and compute centroid
+    if largest_contour:
+        cnt, color = largest_contour
+        M = cv2.moments(cnt)
+        if M["m00"] != 0:
+            cx = int(M["m10"] / M["m00"])
+            cy = int(M["m01"] / M["m00"]) + start_y  # offset to image coords
+            centroid_x = cx
+
+            # Draw centroid
+            cv2.circle(image, (cx, cy), 5, (0, 255, 255), -1)
+            cv2.putText(image, f"{color} center", (cx + 5, cy - 5),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 1)
+
+            print(f"{color.title()} centroid at: ({cx}, {cy})")
+        else:
+            print(f"{color.title()} blob found but area was zero")
+    else:
+        print("No red or green blobs detected")
+
+    # Save debug image
+    output_path = "low_mask.jpg"
+    cv2.imwrite(output_path, image)
+    print(f"Saved image with centroid to '{output_path}'")
 
     return {
         "size": largest_area,
         "color": color,
-        "position": position
+        "position": max(-1.0, min(1.0, (centroid_x - image_center_x) / (image_width / 2))) if centroid_x != -1 else "none"  # this is the x-coordinate or "none"
     }
 #Tell if obstacle is on the left or right, and if it is red or green, and its size
 def gauche_ou_droit(model, image):
@@ -186,8 +287,8 @@ if __name__ == '__main__':
     straight = -0.225
     left = -1
     right = 1
-    forward = 0.22
-    backward = -0.22
+    forward = 0.25
+    backward = -0.25
     stop = 0
     back_up_size_threshold = 50000
     piracer = PiRacerPro()
@@ -195,7 +296,7 @@ if __name__ == '__main__':
     picam2.start()
     time.sleep(2)  # let camera warm up
     not_done = True
-    model = YOLO("yolov8n.pt")  # COCO-trained model
+    #model = YOLO("yolov8n.pt")  # COCO-trained model
     #start main loop
     while not_done:
         direction = "straight"
@@ -203,8 +304,9 @@ if __name__ == '__main__':
         #Get image from camera
 
         #Identify obstacles
-        ob_res = gauche_ou_droit_alt(model, prendre_image(picam2))
-
+        image = prendre_image(picam2)
+        ob_res = gauche_ou_droit_alt(image)
+        magnitude = 1
         #If obstacle is large, stop and back up until it is small enough(farther)
         if ob_res["size"] > back_up_size_threshold:
             speed = "back"
@@ -216,6 +318,20 @@ if __name__ == '__main__':
         #If obstacle is green, turn left
         elif ob_res["color"] == "green":
             direction = "left"
+        #If no obstacles were detected, identify obstacles in the bottom 45%-60% of the image
+        else:
+            speed = "forward"
+            pk_res = trouver(image)
+            if pk_res["color"]!= "none":
+                direction = "left"
+                magnitude = pk_res["position"]*2
+                if magnitude > right:
+                    magnitude = right
+                elif magnitude < left:
+                    magnitude = left
+            else:
+                #If no obstacles were detected, identify lines
+                direction = "straight"
 
         #Identify lines
 
@@ -232,10 +348,10 @@ if __name__ == '__main__':
                 piracer.set_steering_percent(straight)
                 pass
             elif direction == "left":
-                piracer.set_steering_percent(left)
+                piracer.set_steering_percent(left*magnitude)
                 pass
             elif direction == "right":
-                piracer.set_steering_percent(right)
+                piracer.set_steering_percent(right*magnitude)
                 pass
         elif speed == "back":
             piracer.set_throttle_percent(backward)
@@ -244,24 +360,26 @@ if __name__ == '__main__':
                 pass
             # FLIP
             elif direction == "left":
-                piracer.set_steering_percent(right)
+                piracer.set_steering_percent(right*magnitude)
                 pass
             elif direction == "right":
-                piracer.set_steering_percent(left)
+                piracer.set_steering_percent(left*magnitude)
                 pass
         else:
             piracer.set_throttle_percent(stop)
             pass
-        time.sleep(0.1)
+        time.sleep(0.05)
         #not_done = False
 """
 Main Loop:
 1. Capture image from camera.
-2. Detect obstacles using YOLO model.
-3. If the obstacle is large(closer), back up.
-4. If the obstacle is red, turn right.
-5. If the obstacle is green, turn left.
-6. Detect lines and adjust steering accordingly.
+2. Detect obstacles in the bottom 45% of the image, squeezed to the middle.
+    - If the obstacle is large(closer), back up.
+    - If the obstacle is red, turn right.
+    - If the obstacle is green, turn left.
+3. If no obstacles were in the bottom 45% of image, identify obstacles in the bottom 45%-60% of the image.
+    - Align so that the car faces the obstacle.
+6. If no obstacles were detected, detect lines and adjust steering accordingly.
 7. Execute movement based on detected obstacles and lines.
 8. Repeat until 3 turns.
 """
