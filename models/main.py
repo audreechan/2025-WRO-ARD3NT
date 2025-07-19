@@ -23,6 +23,11 @@ def prendre_image(camera):
     image_path = "test.png"
     image = cv2.imread(image_path)
     return image
+def detect_parking_plates(image):
+    return {
+        "left": 0,
+        "right": 0
+    }
 def detect_lines(image):
     image = image.copy()
     image_height, image_width = image.shape[:2]
@@ -508,6 +513,28 @@ if __name__ == '__main__':
             pass
         time.sleep(0.05)
         #not_done = False
+    #Parking
+    piracer.set_steering_percent(right)
+    piracer.set_throttle_percent(forward)
+    not_done = True
+    while not_done:
+        image = prendre_image(picam2)
+        blue = detect_blue_edge(image)
+        magentas = detect_parking_plates(image)
+        if blue["size"] > 0:
+            if blue["low"] > 550:
+                not_done = False
+        elif magentas["left"] == magentas["right"]:
+            piracer.set_steering_percent(straight)
+        elif magentas["left"] > -400:
+            piracer.set_steering_percent(left)
+        elif magentas["right"] < 400:
+            piracer.set_steering_percent(right)
+
+
+    piracer.set_throttle_percent(0)
+    piracer.set_steering_percent(0)
+    piracer.stop()
 """
 Main Loop:
 1. Capture image from camera.
