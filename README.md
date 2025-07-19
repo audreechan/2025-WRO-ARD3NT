@@ -17,19 +17,14 @@
         </ol>
 <p>2. Relation to Electromechanical Components</p>
       <ol>
-            <li>a</li>
-            <li>b</li>
-            <li>c</li>
-            <li>d</li>
-            <li>e</li>
+            <li>In our documentation, you can find our components we use including a wiring diagram.</li>
+            
         </ol>
 <p>3. Build/Compile/Upload Process</p>
       <ol>
             <li>Our code is written in python.</li>
             <li>We used raspberry pi to upload our code to our robot.</li>
-            <li>c</li>
-            <li>d</li>
-            <li>e</li>
+            <li>We integrated the use of Lego pieces.</li>
         </ol>
 </body>
 </html>
