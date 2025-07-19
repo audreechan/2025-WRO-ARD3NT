@@ -16,7 +16,7 @@
             <li>/models/mainlocal.py</li>
         </ol>
 <p>2. Relation to Electromechanical Components</p>
-      <ol>
+        <ol>
             <li>In our documentation, you can find our components we use including a wiring diagram.</li>
             
 
