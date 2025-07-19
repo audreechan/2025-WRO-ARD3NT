@@ -11,11 +11,9 @@
 
  <p>1. Code Modules</p>
         <ol>
-            <li>a</li>
-            <li>b</li>
-            <li>c</li>
-            <li>d</li>
-            <li>e</li>
+            <li>/models/testcam.py</li>
+            <li>/models/main.py</li>
+            <li>/models/mainlocal.py</li>
         </ol>
 <p>2. Relation to Electromechanical Components</p>
       <ol>
