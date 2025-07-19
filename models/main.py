@@ -24,6 +24,7 @@ def prendre_image(camera):
     image = cv2.imread(image_path)
     return image
 def detect_lines(image):
+    image = image.copy()
     image_height, image_width = image.shape[:2]
 
     # Define region of interest (bottom 40%)
@@ -73,8 +74,74 @@ def detect_lines(image):
 
     print(f"Detected {len(angles)} lines. Angles: {angles}")
     return angles
+def detect_blue_edge(image):
+    image = image.copy()
+    image_height, image_width = image.shape[:2]
+    image_center_x = image_width // 2
+
+    # Focus on bottom 60% of the image, excluding edges a bit
+    start_y = int(image_height * 0.45)
+    start_x = int(image_width * 0.05)
+    end_x = int(image_width * 0.95)
+    roi = image[start_y:, start_x:end_x]
+
+    # Draw ROI rectangle (optional)
+    cv2.rectangle(image, (start_x, start_y), (end_x - 1, image_height - 1), (255, 100, 0), 2)
+
+    # Convert to HSV
+    hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
+
+    # Dark blue mask (adjustable)
+    lower_red1 = np.array([0, 0, 0])
+    upper_red1 = np.array([180, 255, 103])
+    blue_mask = cv2.inRange(hsv, lower_red1, upper_red1)
+
+    # Find contours
+    blue_contours, _ = cv2.findContours(blue_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    largest_contour = None
+    largest_area = 0
+    centroid_x = -1
+
+    if blue_contours:
+        biggest = max(blue_contours, key=cv2.contourArea)
+        area = cv2.contourArea(biggest)
+        print(f"Blue edge area: {area}")
+        if area > 2000:  # Minimum area threshold to reduce false positives
+            largest_area = area
+            largest_contour = biggest
+    pcy = 0
+    # Draw centroid if found
+    if largest_contour is not None:
+        M = cv2.moments(largest_contour)
+        if M["m00"] != 0:
+            cx = int(M["m10"] / M["m00"])
+            cy = int(M["m01"] / M["m00"]) + start_y
+            pcy = cy
+            centroid_x = cx
+
+            # Draw it
+            cv2.circle(image, (cx, cy), 5, (255, 0, 255), -1)
+            cv2.putText(image, "Blue edge", (cx + 5, cy - 5),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
+
+            print(f"Blue edge centroid at: ({cx}, {cy}), area: {largest_area}")
+    else:
+        print("No blue edge detected")
+
+    # Save debug image
+    cv2.imwrite("blue_edge_detected.jpg", image)
+    print("detect_blue_edge\n")
+
+    return {
+        "size": largest_area,
+        "position": max(-1.0, min(1.0, (centroid_x - image_center_x) / (image_width / 2))) if centroid_x != -1 else "none",
+        "low": pcy
+    }
+
 #Detects far away objects so that the car can adjust to face them
 def trouver(image):
+    image = image.copy()
     image_height, image_width = image.shape[:2]
     image_center_x = image_width // 2
 
@@ -90,9 +157,9 @@ def trouver(image):
     hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
 
     # Red mask
-    lower_red1 = np.array([0, 120, 150])
+    lower_red1 = np.array([0, 200, 100])
     upper_red1 = np.array([10, 255, 255])
-    lower_red2 = np.array([160, 120, 150])
+    lower_red2 = np.array([160, 100, 100])
     upper_red2 = np.array([180, 255, 255])
     red_mask = cv2.bitwise_or(
         cv2.inRange(hsv, lower_red1, upper_red1),
@@ -121,7 +188,9 @@ def trouver(image):
             if area > largest_area:
                 largest_area = area
                 largest_contour = (biggest, col)
-
+    print(largest_area)
+    if largest_area < 500:
+        largest_contour = None
     # Draw and compute centroid
     if largest_contour:
         cnt, color = largest_contour
@@ -146,6 +215,7 @@ def trouver(image):
     output_path = "high_mask.jpg"
     cv2.imwrite(output_path, image)
     print(f"Saved image with centroid to '{output_path}'")
+    print("trouver\n")
     return {
         "size": largest_area,
         "color": color,
@@ -153,6 +223,7 @@ def trouver(image):
     }
 #Detects closer objects so that the car can pass them correctly
 def gauche_ou_droit_alt(image):
+    image = image.copy()
     image_height, image_width = image.shape[:2]
     image_center_x = image_width // 2
 
@@ -169,9 +240,9 @@ def gauche_ou_droit_alt(image):
     hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
 
     # Red mask
-    lower_red1 = np.array([0, 120, 150])
+    lower_red1 = np.array([0, 200, 100])
     upper_red1 = np.array([10, 255, 255])
-    lower_red2 = np.array([160, 120, 150])
+    lower_red2 = np.array([160, 100, 100])
     upper_red2 = np.array([180, 255, 255])
     red_mask = cv2.bitwise_or(
         cv2.inRange(hsv, lower_red1, upper_red1),
@@ -200,7 +271,9 @@ def gauche_ou_droit_alt(image):
             if area > largest_area:
                 largest_area = area
                 largest_contour = (biggest, col)
-
+    print(largest_area)
+    if largest_area < 500:
+        largest_contour = None
     # Draw and compute centroid
     if largest_contour:
         cnt, color = largest_contour
@@ -225,7 +298,7 @@ def gauche_ou_droit_alt(image):
     output_path = "low_mask.jpg"
     cv2.imwrite(output_path, image)
     print(f"Saved image with centroid to '{output_path}'")
-
+    print("gauche_ou_droit_alt\n")
     return {
         "size": largest_area,
         "color": color,
@@ -341,7 +414,8 @@ if __name__ == '__main__':
     forward = 0.24
     backward = -0.24
     stop = 0
-    back_up_size_threshold = 30000
+    back_up_size_threshold = 15000
+    backupCooldown = 0
     piracer = PiRacerPro()
     picam2 = Picamera2()
     picam2.start()
@@ -360,7 +434,7 @@ if __name__ == '__main__':
         magnitude = 1
         #If obstacle is large, stop and back up until it is small enough(farther)
         if ob_res["size"] > back_up_size_threshold:
-            speed = "back"
+            backupCooldown = 3
 
         #If obstacle is red, turn right
         if ob_res["color"] == "red":
@@ -381,10 +455,24 @@ if __name__ == '__main__':
                     magnitude = left
             else:
                 #If no obstacles were detected, identify lines
-                direction = "straight"
+                blue = detect_blue_edge(image)
+                if blue["size"] > 0:
+                    if blue["low"] >550:
+                        backupCooldown = 3
+                    #If blue edge is on the left, turn left
+                    #Bias to the left since car runs clockwise
+                    if blue["size"] > 30000:
+                        direction = "left"
+                        #magnitude = abs(blue["position"])
+                    #If blue edge is on the right, turn right
+                    else:
+                        direction = "right"
+                        #magnitude = abs(blue["position"])
 
         #Identify lines
-
+        if backupCooldown > 0:
+            speed = "back"
+            backupCooldown -= 1
         #If line is tilting right, turn right
         #If line is tilting left, turn left
         #Note: keep adjusting steering with the lines
