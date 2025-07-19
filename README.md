@@ -6,7 +6,8 @@
   <h3>Team Members: Jack Liu, Emily Luo, Audrey Chan</h3>
 
 
-  <h2>You can find our documentation at this link: </h2>
+  <h2>You can find our documentation at this link: <a href="[https://example.com](https://audreechan.github.io/2025-WRO-ARD3NT/)">Documentation Website</a> </h2>
+  <h2>You can find our documentation at this link: <a href="https://docs.google.com/document/d/1dbSbMPy7cOchcHcigPwj9jLfEKuXulrQMr0qwxwgdsA/edit?usp=sharing)">Google Docs</a> </h2>
 
  <p>1. Code Modules</p>
         <ol>
