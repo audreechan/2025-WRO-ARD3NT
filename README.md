@@ -19,7 +19,7 @@
       <ol>
             <li>In our documentation, you can find our components we use including a wiring diagram.</li>
             
-        </ol>
+
 <p>3. Build/Compile/Upload Process</p>
       <ol>
             <li>Our code is written in python.</li>
